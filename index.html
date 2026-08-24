@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minato Craft Launcher</title>
+    <style>
+        /* ============================================
+           RESET E CONFIGURAÇÕES GLOBAIS
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'MinecraftFont';
+            src: url('data:font/woff2;base64,') format('woff2');
+        }
+
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-sidebar: #2d2d2d;
+            --bg-sidebar-hover: #3d3d3d;
+            --bg-sidebar-active: #4a4a4a;
+            --bg-card: rgba(0, 0, 0, 0.7);
+            --bg-card-hover: rgba(0, 0, 0, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-muted: #888888;
+            --accent-green: #3c8527;
+            --accent-green-hover: #4a9e30;
+            --accent-green-dark: #2d6b1e;
+            --border-color: #3a3a3a;
+            --border-light: #4a4a4a;
+            --shadow-dark: rgba(0, 0, 0, 0.5);
+            --shadow-light: rgba(255, 255, 255, 0.05);
+            --sidebar-width: 220px;
+            --header-height: 0px;
+            --footer-height: 80px;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ============================================
+           LAYOUT PRINCIPAL
+           ============================================ */
+        .launcher-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 100;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), #5cb85c, var(--accent-green));
+            z-index: 10;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .sidebar-section {
+            padding: 12px 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            letter-spacing: 1.5px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+            gap: 12px;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-sidebar-hover);
+        }
+
+        .sidebar-item.active {
+            background: var(--bg-sidebar-active);
+            border-left-color: var(--accent-green);
+        }
+
+        .sidebar-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-item-icon.news-icon {
+            background: linear-gradient(135deg, #4a90d9, #357abd);
+        }
+
+        .sidebar-item-icon.java-icon {
+            background: linear-gradient(135deg, #5cb85c, #4a9e4a);
+        }
+
+        .sidebar-item-icon.windows-icon {
+            background: linear-gradient(135deg, #0078d4, #005a9e);
+        }
+
+        .sidebar-item-icon.dungeons-icon {
+            background: linear-gradient(135deg, #8b5e3c, #6b4226);
+        }
+
+        .sidebar-item-icon.legends-icon {
+            background: linear-gradient(135deg, #6c5ce7, #5a4bd1);
+        }
+
+        .sidebar-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .sidebar-item-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-item-subtitle {
+            font-size: 10px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .sidebar-item.active .sidebar-item-title {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 16px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 12px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 10px;
+        }
+
+        .sidebar-profile:hover {
+            background: var(--bg-sidebar-hover);
+        }
+
+        .sidebar-profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            image-rendering: pixelated;
+        }
+
+        .sidebar-profile-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .sidebar-profile-status {
+            font-size: 10px;
+            color: #5cb85c;
+        }
+
+        .sidebar-profile-status::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #5cb85c;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        /* ============================================
+           ÁREA PRINCIPAL
+           ============================================ */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============================================
+           BACKGROUND DO JOGO
+           ============================================ */
+        .game-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://image.qwenlm.ai/public_source/e07d625a-06d9-4d9c-b96f-5572633cd714/1871cb488-b3eb-4cc6-b315-3a0a72e9a2da.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .game-background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(0, 0, 0, 0.1) 30%,
+                rgba(0, 0, 0, 0.1) 60%,
+                rgba(0, 0, 0, 0.6) 85%,
+                rgba(0, 0, 0, 0.85) 100%
+            );
+            z-index: 1;
+        }
+
+        .game-background-vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           LOGO DO JOGO
+           ============================================ */
+        .game-logo-container {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+        }
+
+        .game-logo {
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 52px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow:
+                3px 3px 0px #3f3f3f,
+                -1px -1px 0px #3f3f3f,
+                1px -1px 0px #3f3f3f,
+                -1px 1px 0px #3f3f3f,
+                0px 4px 8px rgba(0,0,0,0.5);
+            letter-spacing: 3px;
+            image-rendering: pixelated;
+            position: relative;
+            display: inline-block;
+        }
+
+        .game-logo::after {
+            content: 'MINATO CRAFT';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            color: rgba(0,0,0,0.3);
+            z-index: -1;
+        }
+
+        .game-logo-subtitle {
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #dddddd;
+            text-shadow:
+                2px 2px 0px #2a2a2a,
+                0px 3px 6px rgba(0,0,0,0.5);
+            letter-spacing: 6px;
+            margin-top: -5px;
+            text-transform: uppercase;
+        }
+
+        .game-logo-java {
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #aaaaaa;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            letter-spacing: 4px;
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           SPLASH TEXT (texto amarelo piscante)
+           ============================================ */
+        .splash-text {
+            position: absolute;
+            top: 110px;
+            right: 20%;
+            transform: rotate(-15deg);
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffff00;
+            text-shadow: 2px 2px 0px #3f3f3f;
+            z-index: 10;
+            animation: splashPulse 0.5s ease-in-out infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes splashPulse {
+            0% { transform: rotate(-15deg) scale(1); }
+            100% { transform: rotate(-15deg) scale(1.1); }
+        }
+
+        /* ============================================
+           CARDS DE VERSÃO
+           ============================================ */
+        .version-cards {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .version-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .version-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .version-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .version-card.active {
+            border-color: var(--accent-green);
+            background: rgba(60, 133, 39, 0.2);
+        }
+
+        .version-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .version-card-icon.release-icon {
+            background: linear-gradient(135deg, #5cb85c, #4a9e4a);
+        }
+
+        .version-card-icon.snapshot-icon {
+            background: linear-gradient(135deg, #f0ad4e, #e69a3d);
+        }
+
+        .version-card-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        .version-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .version-card-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .version-card-number {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .version-card-size {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .version-card-badge {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .version-card-badge.new {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .version-card-badge.beta {
+            background: #f0ad4e;
+            color: #333;
+        }
+
+        /* ============================================
+           BOTÃO PLAY
+           ============================================ */
+        .play-button-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .play-button {
+            background: linear-gradient(180deg, #4a9e30 0%, #3c8527 50%, #2d6b1e 100%);
+            border: 2px solid #5cb85c;
+            border-radius: 4px;
+            padding: 14px 80px;
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 2px 2px 0px #1a3d0e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 4px 0 #1a3d0e,
+                0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .play-button:hover {
+            background: linear-gradient(180deg, #5cb85c 0%, #4a9e30 50%, #3c8527 100%);
+            border-color: #6ec96e;
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 0 #1a3d0e,
+                0 8px 25px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .play-button:hover::before {
+            left: 100%;
+        }
+
+        .play-button:active {
+            transform: translateY(2px);
+            box-shadow:
+                0 2px 0 #1a3d0e,
+                0 3px 10px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .play-button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .play-button .button-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .play-button .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        .play-button.loading .button-text {
+            display: none;
+        }
+
+        .play-button.loading .loading-spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============================================
+           FOOTER / BARRA INFERIOR
+           ============================================ */
+        .footer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 20;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-version-info {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .footer-version-info span {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .footer-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-profile-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 3px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .footer-profile-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .footer-settings-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .footer-settings-btn:hover {
+            background: var(--bg-sidebar-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        /* ============================================
+           ANIMAÇÕES E EFEITOS
+           ============================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(92, 184, 92, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(92, 184, 92, 0.6); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 0.4s ease forwards;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease forwards;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        /* ============================================
+           TOOLTIP
+           ============================================ */
+        .tooltip {
+            position: fixed;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 250px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .tooltip-text {
+            color: var(--text-secondary);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        /* ============================================
+           MODAL DE CONFIGURAÇÕES
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1e1e1e 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .modal-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-option:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border-light);
+        }
+
+        .modal-option-label {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .modal-option-value {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 22px;
+            background: var(--border-color);
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-green);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
+        }
+
+        /* ============================================
+           NOTIFICAÇÕES
+           ============================================ */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 600;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .notification {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 12px 16px;
+            min-width: 280px;
+            max-width: 350px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            animation: slideInRight 0.3s ease forwards;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .notification.success {
+            border-left-color: var(--accent-green);
+        }
+
+        .notification.warning {
+            border-left-color: #f0ad4e;
+        }
+
+        .notification.error {
+            border-left-color: #d9534f;
+        }
+
+        .notification.info {
+            border-left-color: #5bc0de;
+        }
+
+        .notification-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .notification-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px;
+            transition: color 0.2s;
+        }
+
+        .notification-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           LOADING SCREEN
+           ============================================ */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            font-family: 'MinecraftFont', 'Courier New', monospace;
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 3px 3px 0px #3f3f3f;
+            margin-bottom: 30px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .loading-bar-container {
+            width: 300px;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), #5cb85c);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        /* ============================================
+           PARTICLES / EFEITOS VISUAIS
+           ============================================ */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 1px;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ============================================
+           CONTEXT MENU
+           ============================================ */
+        .context-menu {
+            position: fixed;
+            background: rgba(30, 30, 30, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 0;
+            min-width: 180px;
+            z-index: 700;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            animation: scaleIn 0.15s ease forwards;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .context-menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .context-menu-item.danger {
+            color: #d9534f;
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+        }
+
+        .context-menu-item-icon {
+            width: 16px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        /* ============================================
+           NEWS PANEL
+           ============================================ */
+        .news-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .news-panel.active {
+            display: flex;
+        }
+
+        .news-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .news-header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .news-back-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .news-back-btn:hover {
+            background: var(--bg-sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 30px;
+        }
+
+        .news-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-light);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .news-card-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #3c8527, #2d6b1e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .news-card-content {
+            padding: 16px;
+        }
+
+        .news-card-date {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .news-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .news-card-excerpt {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           SCROLLBAR CUSTOMIZADA
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
+        }
+
+        /* ============================================
+           RESPONSIVIDADE
+           ============================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                min-width: 60px;
+            }
+
+            .sidebar-item-text,
+            .sidebar-section-title,
+            .sidebar-profile-name,
+            .sidebar-profile-status {
+                display: none;
+            }
+
+            .sidebar-item {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .game-logo {
+                font-size: 32px;
+            }
+
+            .game-logo-subtitle {
+                font-size: 12px;
+            }
+
+            .play-button {
+                padding: 12px 50px;
+                font-size: 16px;
+            }
+
+            .version-cards {
+                left: 10px;
+                bottom: 80px;
+            }
+
+            .version-card {
+                min-width: 180px;
+            }
+        }
+
+        /* ============================================
+           EFEITOS ADICIONAIS
+           ============================================ */
+        .glow-effect {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(92, 184, 92, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .version-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.98);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .version-dropdown.active {
+            display: flex;
+        }
+
+        .version-dropdown-item {
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .version-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .version-dropdown-item.selected {
+            background: rgba(60, 133, 39, 0.2);
+            color: #5cb85c;
+        }
+
+        .version-dropdown-item-version {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           ANIMAÇÃO DE TRANSIÇÃO DE PÁGINA
+           ============================================ */
+        .page-transition {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 40;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-transition.active {
+            display: flex;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        /* ============================================
+           STATUS INDICATOR
+           ============================================ */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #5cb85c;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.offline {
+            background: #d9534f;
+        }
+
+        .status-dot.updating {
+            background: #f0ad4e;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ============================================
+           SKIN PREVIEW
+           ============================================ */
+        .skin-preview {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            image-rendering: pixelated;
+        }
+
+        .skin-preview-head {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f4c28a, #d4a56a);
+            position: absolute;
+            top: 0;
+            left: 16px;
+            border-radius: 2px;
+        }
+
+        .skin-preview-body {
+            width: 32px;
+            height: 24px;
+            background: linear-gradient(135deg, #5cb85c, #4a9e4a);
+            position: absolute;
+            top: 32px;
+            left: 16px;
+            border-radius: 2px;
+        }
+
+        .skin-preview-legs {
+            width: 32px;
+            height: 8px;
+            background: linear-gradient(135deg, #3b5998, #2d4373);
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            border-radius: 2px;
+        }
+
+        /* ============================================
+           PROGRESS BAR PARA DOWNLOAD
+           ============================================ */
+        .download-progress {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            z-index: 15;
+            display: none;
+        }
+
+        .download-progress.active {
+            display: block;
+        }
+
+        .download-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .download-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), #5cb85c);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .download-progress-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* ============================================
+           MINI MAPA / INFO
+           ============================================ */
+        .mini-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .info-badge {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-badge-icon {
+            font-size: 12px;
+        }
+
+        /* ============================================
+           CHAT / MENSAGENS
+           ============================================ */
+        .chat-container {
+            position: absolute;
+            bottom: 120px;
+            left: 20px;
+            width: 350px;
+            z-index: 15;
+            display: none;
+        }
+
+        .chat-container.active {
+            display: block;
+        }
+
+        .chat-messages {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 6px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+        }
+
+        .chat-message {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .chat-message .username {
+            color: #5cb85c;
+            font-weight: 600;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        .chat-send-btn {
+            background: var(--accent-green);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--accent-green-hover);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">MINATO CRAFT</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+        <div class="loading-text">Carregando launcher<span class="loading-dots"></span></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltipTitle"></div>
+        <div class="tooltip-text" id="tooltipText"></div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="play">
+            <span class="context-menu-item-icon">▶</span>
+            <span>Jogar</span>
+        </div>
+        <div class="context-menu-item" data-action="install">
+            <span class="context-menu-item-icon">⬇</span>
+            <span>Instalar</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="settings">
+            <span class="context-menu-item-icon"></span>
+            <span>Configurações</span>
+        </div>
+        <div class="context-menu-item" data-action="folder">
+            <span class="context-menu-item-icon">📁</span>
+            <span>Abrir pasta</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item danger" data-action="uninstall">
+            <span class="context-menu-item-icon">🗑</span>
+            <span>Desinstalar</span>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">⚙ Configurações</div>
+                <button class="modal-close" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <div class="modal-section-title">Geral</div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Iniciar com o Windows</div>
+                            <div class="modal-option-value">Abrir launcher automaticamente</div>
+                        </div>
+                        <div class="toggle-switch" id="toggleStartup"></div>
+                    </div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Notificações</div>
+                            <div class="modal-option-value">Receber atualizações</div>
+                        </div>
+                        <div class="toggle-switch active" id="toggleNotifications"></div>
+                    </div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Tema escuro</div>
+                            <div class="modal-option-value">Usar tema escuro no launcher</div>
+                        </div>
+                        <div class="toggle-switch active" id="toggleDarkTheme"></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Jogo</div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Memória RAM alocada</div>
+                            <div class="modal-option-value" id="ramValue">4096 MB</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <button class="footer-settings-btn" id="ramDown">−</button>
+                            <button class="footer-settings-btn" id="ramUp">+</button>
+                        </div>
+                    </div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Resolução</div>
+                            <div class="modal-option-value">1920 × 1080</div>
+                        </div>
+                    </div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Fullscreen</div>
+                            <div class="modal-option-value">Iniciar em tela cheia</div>
+                        </div>
+                        <div class="toggle-switch" id="toggleFullscreen"></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title">Conta</div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Usuário</div>
+                            <div class="modal-option-value">MinatoPlayer_2024</div>
+                        </div>
+                    </div>
+                    <div class="modal-option">
+                        <div>
+                            <div class="modal-option-label">Versão do Launcher</div>
+                            <div class="modal-option-value">2.4.1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Panel -->
+    <div class="news-panel" id="newsPanel">
+        <div class="news-header">
+            <div class="news-header-title"> Notícias</div>
+            <button class="news-back-btn" id="newsBackBtn">← Voltar</button>
+        </div>
+        <div class="news-grid">
+            <div class="news-card">
+                <div class="news-card-image">⚔️</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">15 de Janeiro, 2024</div>
+                    <div class="news-card-title">Nova atualização de combate disponível!</div>
+                    <div class="news-card-excerpt">Novas armas, armaduras e mecânicas de combate foram adicionadas ao jogo.</div>
+                </div>
+            </div>
+            <div class="news-card">
+                <div class="news-card-image" style="background: linear-gradient(135deg, #f0ad4e, #e69a3d);">🌍</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">10 de Janeiro, 2024</div>
+                    <div class="news-card-title">Novo bioma: Floresta Encantada</div>
+                    <div class="news-card-excerpt">Explore uma nova floresta mágica com criaturas únicas e recursos especiais.</div>
+                </div>
+            </div>
+            <div class="news-card">
+                <div class="news-card-image" style="background: linear-gradient(135deg, #6c5ce7, #5a4bd1);">🏰</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">5 de Janeiro, 2024</div>
+                    <div class="news-card-title">Evento especial: Castelo do Dragão</div>
+                    <div class="news-card-excerpt">Participe do evento limitado e ganhe recompensas exclusivas.</div>
+                </div>
+            </div>
+            <div class="news-card">
+                <div class="news-card-image" style="background: linear-gradient(135deg, #d9534f, #c9302c);">🔥</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">1 de Janeiro, 2024</div>
+                    <div class="news-card-title">Correções de bugs e melhorias de performance</div>
+                    <div class="news-card-excerpt">Diversas correções importantes foram aplicadas para melhorar sua experiência.</div>
+                </div>
+            </div>
+            <div class="news-card">
+                <div class="news-card-image" style="background: linear-gradient(135deg, #5bc0de, #46b8da);">❄️</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">28 de Dezembro, 2023</div>
+                    <div class="news-card-title">Atualização de inverno: Neve e Gelo</div>
+                    <div class="news-card-excerpt">Novos blocos de gelo, neve e criaturas do inverno foram adicionados.</div>
+                </div>
+            </div>
+            <div class="news-card">
+                <div class="news-card-image" style="background: linear-gradient(135deg, #8b5e3c, #6b4226);">⛏️</div>
+                <div class="news-card-content">
+                    <div class="news-card-date">20 de Dezembro, 2023</div>
+                    <div class="news-card-title">Novas ferramentas de mineração</div>
+                    <div class="news-card-excerpt">Ferramentas mais eficientes e duráveis agora estão disponíveis.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Launcher Container -->
+    <div class="launcher-container" id="launcherContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-item" data-page="news" id="sidebarNews">
+                    <div class="sidebar-item-icon news-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    </div>
+                    <div class="sidebar-item-text">
+                        <div class="sidebar-item-title">News</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Jogos</div>
+                <div class="sidebar-item active" data-page="java" id="sidebarJava">
+                    <div class="sidebar-item-icon java-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <div class="sidebar-item-text">
+                        <div class="sidebar-item-title">Minato Craft</div>
+                        <div class="sidebar-item-subtitle">Java Edition</div>
+                    </div>
+                </div>
+                <div class="sidebar-item" data-page="windows" id="sidebarWindows">
+                    <div class="sidebar-item-icon windows-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3 12V6.75L9 5.43V11.91L3 12M20 3V11.75L10 11.9V5.21L20 3M3 13L9 13.09V19.9L3 18.75V13M20 13.25V22L10 20.09V13.1L20 13.25Z"/></svg>
+                    </div>
+                    <div class="sidebar-item-text">
+                        <div class="sidebar-item-title">Minato Craft</div>
+                        <div class="sidebar-item-subtitle">for Windows</div>
+                    </div>
+                </div>
+                <div class="sidebar-item" data-page="dungeons" id="sidebarDungeons">
+                    <div class="sidebar-item-icon dungeons-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7 3.5v7.64l-7 3.5-7-3.5V7.68l7-3.5z"/></svg>
+                    </div>
+                    <div class="sidebar-item-text">
+                        <div class="sidebar-item-title">Minato Craft</div>
+                        <div class="sidebar-item-subtitle">Dungeons</div>
+                    </div>
+                </div>
+                <div class="sidebar-item" data-page="legends" id="sidebarLegends">
+                    <div class="sidebar-item-icon legends-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                    </div>
+                    <div class="sidebar-item-text">
+                        <div class="sidebar-item-title">Minato Craft</div>
+                        <div class="sidebar-item-subtitle">Legends</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-profile" id="sidebarProfile">
+                    <div class="sidebar-profile-avatar">M</div>
+                    <div>
+                        <div class="sidebar-profile-name">MinatoPlayer</div>
+                        <div class="sidebar-profile-status">Online</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Background -->
+            <div class="game-background" id="gameBackground"></div>
+            <div class="game-background-overlay"></div>
+            <div class="game-background-vignette"></div>
+
+            <!-- Particles -->
+            <div class="particles-container" id="particlesContainer"></div>
+
+            <!-- Glow Effect -->
+            <div class="glow-effect" id="glowEffect"></div>
+
+            <!-- Game Logo -->
+            <div class="game-logo-container animate-fade-in">
+                <div class="game-logo">MINATO CRAFT</div>
+                <div class="game-logo-subtitle">JAVA EDITION</div>
+            </div>
+
+            <!-- Splash Text -->
+            <div class="splash-text animate-float" id="splashText">Também experimente Minato Legends!</div>
+
+            <!-- Mini Info -->
+            <div class="mini-info animate-slide-right">
+                <div class="info-badge">
+                    <span class="info-badge-icon">🟢</span>
+                    <span>Servidor online</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">👥</span>
+                    <span>1,247 jogadores</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon"></span>
+                    <span>Ping: 24ms</span>
+                </div>
+            </div>
+
+            <!-- Version Cards -->
+            <div class="version-cards animate-slide-left" id="versionCards">
+                <div class="version-card active" data-version="1.21.4" id="versionRelease">
+                    <div class="version-card-icon release-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <div class="version-card-info">
+                        <div class="version-card-label">Latest release</div>
+                        <div class="version-card-number">1.21.4</div>
+                        <div class="version-card-size">1.25 GB</div>
+                    </div>
+                    <div class="version-card-badge new">NEW</div>
+                </div>
+                <div class="version-card" data-version="1.21.5-pre1" id="versionSnapshot1">
+                    <div class="version-card-icon snapshot-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <div class="version-card-info">
+                        <div class="version-card-label">Latest snapshot</div>
+                        <div class="version-card-number">1.21.5-pre1</div>
+                        <div class="version-card-size">1.20 GB</div>
+                    </div>
+                    <div class="version-card-badge beta">BETA</div>
+                </div>
+                <div class="version-card" data-version="1.21.5-pre2" id="versionSnapshot2">
+                    <div class="version-card-icon snapshot-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <div class="version-card-info">
+                        <div class="version-card-label">Latest snapshot</div>
+                        <div class="version-card-number">1.21.5-pre2</div>
+                        <div class="version-card-size">1.20 GB</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Progress -->
+            <div class="download-progress" id="downloadProgress">
+                <div class="download-progress-bar">
+                    <div class="download-progress-fill" id="downloadProgressFill"></div>
+                </div>
+                <div class="download-progress-text">
+                    <span id="downloadProgressText">Baixando...</span>
+                    <span id="downloadProgressPercent">0%</span>
+                </div>
+            </div>
+
+            <!-- Play Button -->
+            <div class="play-button-container animate-scale-in">
+                <button class="play-button animate-glow" id="playButton">
+                    <span class="button-text">JOGAR</span>
+                    <div class="loading-spinner"></div>
+                </button>
+            </div>
+
+            <!-- Footer Bar -->
+            <div class="footer-bar">
+                <div class="footer-left">
+                    <div class="footer-version-info">
+                        Versão: <span id="currentVersion">1.21.4</span> | Java Edition
+                    </div>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText">Pronto para jogar</span>
+                    </div>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-profile" id="footerProfile">
+                        <div class="footer-profile-avatar">M</div>
+                        <div class="footer-profile-name">MinatoPlayer_2024</div>
+                    </div>
+                    <button class="footer-settings-btn" id="settingsBtn" title="Configurações">⚙</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================
+        let currentVersion = '1.21.4';
+        let ramAllocation = 4096;
+        let isPlaying = false;
+        let splashTexts = [
+            'Também experimente Minato Legends!',
+            'Agora com mais blocos!',
+            '100% livre de creeper... talvez.',
+            'Novo bioma disponível!',
+            'Atualize para a versão mais recente!',
+            'Jogue com amigos online!',
+            'Mais de 1000 mods disponíveis!',
+            'Servidor com 1000+ jogadores!',
+            'Nova atualização de combate!',
+            'Explore cavernas infinitas!'
+        ];
+        let currentSplashIndex = 0;
+
+        // ============================================
+        // ELEMENTOS DOM
+        // ============================================
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loadingBar = document.getElementById('loadingBar');
+        const playButton = document.getElementById('playButton');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeModal = document.getElementById('closeModal');
+        const contextMenu = document.getElementById('contextMenu');
+        const tooltip = document.getElementById('tooltip');
+        const tooltipTitle = document.getElementById('tooltipTitle');
+        const tooltipText = document.getElementById('tooltipText');
+        const notificationContainer = document.getElementById('notificationContainer');
+        const newsPanel = document.getElementById('newsPanel');
+        const newsBackBtn = document.getElementById('newsBackBtn');
+        const sidebarNews = document.getElementById('sidebarNews');
+        const sidebarJava = document.getElementById('sidebarJava');
+        const sidebarWindows = document.getElementById('sidebarWindows');
+        const sidebarDungeons = document.getElementById('sidebarDungeons');
+        const sidebarLegends = document.getElementById('sidebarLegends');
+        const versionCards = document.querySelectorAll('.version-card');
+        const currentVersionEl = document.getElementById('currentVersion');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const splashTextEl = document.getElementById('splashText');
+        const downloadProgress = document.getElementById('downloadProgress');
+        const downloadProgressFill = document.getElementById('downloadProgressFill');
+        const downloadProgressText = document.getElementById('downloadProgressText');
+        const downloadProgressPercent = document.getElementById('downloadProgressPercent');
+        const particlesContainer = document.getElementById('particlesContainer');
+        const glowEffect = document.getElementById('glowEffect');
+        const toggleStartup = document.getElementById('toggleStartup');
+        const toggleNotifications = document.getElementById('toggleNotifications');
+        const toggleDarkTheme = document.getElementById('toggleDarkTheme');
+        const toggleFullscreen = document.getElementById('toggleFullscreen');
+        const ramValue = document.getElementById('ramValue');
+        const ramDown = document.getElementById('ramDown');
+        const ramUp = document.getElementById('ramUp');
+
+        // ============================================
+        // LOADING SCREEN
+        // ============================================
+        function simulateLoading() {
+            let progress = 0;
+            const loadingTexts = [
+                'Carregando launcher',
+                'Verificando atualizações',
+                'Carregando recursos',
+                'Preparando ambiente',
+                'Quase pronto'
+            ];
+            const loadingTextEl = document.querySelector('.loading-text');
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress > 100) progress = 100;
+
+                loadingBar.style.width = progress + '%';
+
+                const textIndex = Math.floor((progress / 100) * loadingTexts.length);
+                if (loadingTextEl) {
+                    loadingTextEl.innerHTML = loadingTexts[Math.min(textIndex, loadingTexts.length - 1)] + '<span class="loading-dots"></span>';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.classList.add('hidden');
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            showNotification('success', 'Launcher pronto!', 'Minato Craft está pronto para jogar.');
+                        }, 500);
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // ============================================
+        // PARTÍCULAS
+        // ============================================
+        function createParticles() {
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // SPLASH TEXT ROTATION
+        // ============================================
+        function rotateSplashText() {
+            currentSplashIndex = (currentSplashIndex + 1) % splashTexts.length;
+            splashTextEl.style.opacity = '0';
+            setTimeout(() => {
+                splashTextEl.textContent = splashTexts[currentSplashIndex];
+                splashTextEl.style.opacity = '1';
+            }, 300);
+        }
+
+        // ============================================
+        // NOTIFICAÇÕES
+        // ============================================
+        function showNotification(type, title, text) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icons = {
+                success: '✓',
+                warning: '⚠',
+                error: '✕',
+                info: ''
+            };
+
+            notification.innerHTML = `
+                <div class="notification-icon">${icons[type]}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-text">${text}</div>
+                </div>
+                <button class="notification-close">✕</button>
+            `;
+
+            notificationContainer.appendChild(notification);
+
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', () => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            });
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100px)';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // ============================================
+        // TOOLTIP
+        // ============================================
+        function showTooltip(title, text, event) {
+            tooltipTitle.textContent = title;
+            tooltipText.textContent = text;
+            tooltip.classList.add('visible');
+            positionTooltip(event);
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+        }
+
+        function positionTooltip(event) {
+            const x = event.clientX + 10;
+            const y = event.clientY + 10;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+        }
+
+        // ============================================
+        // CONTEXT MENU
+        // ============================================
+        function showContextMenu(event) {
+            event.preventDefault();
+            contextMenu.style.left = event.clientX + 'px';
+            contextMenu.style.top = event.clientY + 'px';
+            contextMenu.classList.add('active');
+        }
+
+        function hideContextMenu() {
+            contextMenu.classList.remove('active');
+        }
+
+        // ============================================
+        // VERSION SELECTION
+        // ============================================
+        function selectVersion(card) {
+            versionCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            currentVersion = card.dataset.version;
+            currentVersionEl.textContent = currentVersion;
+
+            const label = card.querySelector('.version-card-label').textContent;
+            showNotification('info', 'Versão selecionada', `${label}: ${currentVersion}`);
+        }
+
+        // ============================================
+        // PLAY BUTTON
+        // ============================================
+        function handlePlay() {
+            if (isPlaying) return;
+            isPlaying = true;
+
+            playButton.classList.add('loading');
+            statusDot.className = 'status-dot updating';
+            statusText.textContent = 'Iniciando jogo...';
+
+            showNotification('info', 'Iniciando...', `Carregando Minato Craft ${currentVersion}`);
+
+            setTimeout(() => {
+                playButton.classList.remove('loading');
+                isPlaying = false;
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Pronto para jogar';
+
+                // Abrir o site
+                window.open('https://minatocraft.netlify.app/', '_blank');
+                showNotification('success', 'Jogo iniciado!', 'Minato Craft foi aberto no navegador.');
+            }, 2000);
+        }
+
+        // ============================================
+        // SETTINGS MODAL
+        // ============================================
+        function openSettings() {
+            settingsModal.classList.add('active');
+        }
+
+        function closeSettings() {
+            settingsModal.classList.remove('active');
+        }
+
+        // ============================================
+        // TOGGLE SWITCHES
+        // ============================================
+        function setupToggle(toggle) {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                const isActive = toggle.classList.contains('active');
+                showNotification('info', 'Configuração alterada', `Opção ${isActive ? 'ativada' : 'desativada'}`);
+            });
+        }
+
+        // ============================================
+        // RAM ALLOCATION
+        // ============================================
+        function updateRam() {
+            ramValue.textContent = ramAllocation + ' MB';
+        }
+
+        // ============================================
+        // SIDEBAR NAVIGATION
+        // ============================================
+        function setActiveSidebar(item) {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+        }
+
+        function navigateToNews() {
+            setActiveSidebar(sidebarNews);
+            newsPanel.classList.add('active');
+        }
+
+        function navigateFromNews() {
+            setActiveSidebar(sidebarJava);
+            newsPanel.classList.remove('active');
+        }
+
+        // ============================================
+        // GLOW EFFECT FOLLOW MOUSE
+        // ============================================
+        function updateGlowEffect(event) {
+            const x = event.clientX - 100;
+            const y = event.clientY - 100;
+            glowEffect.style.left = x + 'px';
+            glowEffect.style.top = y + 'px';
+        }
+
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+        function handleKeyboard(event) {
+            if (event.key === 'Escape') {
+                closeSettings();
+                hideContextMenu();
+                navigateFromNews();
+            }
+            if (event.key === 'Enter' && !isPlaying) {
+                handlePlay();
+            }
+            if (event.key === 'F5') {
+                event.preventDefault();
+                showNotification('info', 'Atualizando...', 'Verificando atualizações disponíveis.');
+            }
+        }
+
+        // ============================================
+        // ANIMAÇÃO DE DOWNLOAD SIMULADA
+        // ============================================
+        function simulateDownload() {
+            downloadProgress.classList.add('active');
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 5 + 2;
+                if (progress > 100) progress = 100;
+
+                downloadProgressFill.style.width = progress + '%';
+                downloadProgressPercent.textContent = Math.floor(progress) + '%';
+                downloadProgressText.textContent = `Baixando Minato Craft ${currentVersion}...`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        downloadProgress.classList.remove('active');
+                        downloadProgressFill.style.width = '0%';
+                        showNotification('success', 'Download completo!', `Minato Craft ${currentVersion} está pronto.`);
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO DE EVENTOS
+        // ============================================
+        function initEventListeners() {
+            // Play button
+            playButton.addEventListener('click', handlePlay);
+
+            // Settings
+            settingsBtn.addEventListener('click', openSettings);
+            closeModal.addEventListener('click', closeSettings);
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) closeSettings();
+            });
+
+            // Toggles
+            setupToggle(toggleStartup);
+            setupToggle(toggleNotifications);
+            setupToggle(toggleDarkTheme);
+            setupToggle(toggleFullscreen);
+
+            // RAM
+            ramDown.addEventListener('click', () => {
+                if (ramAllocation > 1024) {
+                    ramAllocation -= 512;
+                    updateRam();
+                }
+            });
+            ramUp.addEventListener('click', () => {
+                if (ramAllocation < 16384) {
+                    ramAllocation += 512;
+                    updateRam();
+                }
+            });
+
+            // Version cards
+            versionCards.forEach(card => {
+                card.addEventListener('click', () => selectVersion(card));
+                card.addEventListener('contextmenu', showContextMenu);
+                card.addEventListener('mouseenter', (e) => {
+                    const label = card.querySelector('.version-card-label').textContent;
+                    const number = card.querySelector('.version-card-number').textContent;
+                    const size = card.querySelector('.version-card-size').textContent;
+                    showTooltip(label, `${number} - ${size}`, e);
+                });
+                card.addEventListener('mouseleave', hideTooltip);
+            });
+
+            // Sidebar navigation
+            sidebarNews.addEventListener('click', navigateToNews);
+            sidebarJava.addEventListener('click', () => {
+                setActiveSidebar(sidebarJava);
+                navigateFromNews();
+            });
+            sidebarWindows.addEventListener('click', () => {
+                setActiveSidebar(sidebarWindows);
+                showNotification('info', 'Minato Craft for Windows', 'Esta versão está em desenvolvimento.');
+            });
+            sidebarDungeons.addEventListener('click', () => {
+                setActiveSidebar(sidebarDungeons);
+                showNotification('info', 'Minato Craft Dungeons', 'Explore masmorras épicas!');
+            });
+            sidebarLegends.addEventListener('click', () => {
+                setActiveSidebar(sidebarLegends);
+                showNotification('info', 'Minato Craft Legends', 'Batalhas épicas te esperam!');
+            });
+
+            // News back button
+            newsBackBtn.addEventListener('click', navigateFromNews);
+
+            // Context menu items
+            document.querySelectorAll('.context-menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const action = item.dataset.action;
+                    hideContextMenu();
+
+                    switch (action) {
+                        case 'play':
+                            handlePlay();
+                            break;
+                        case 'install':
+                            simulateDownload();
+                            break;
+                        case 'settings':
+                            openSettings();
+                            break;
+                        case 'folder':
+                            showNotification('info', 'Pasta do jogo', 'Abrindo pasta de instalação...');
+                            break;
+                        case 'uninstall':
+                            showNotification('warning', 'Desinstalar', 'Esta ação não pode ser desfeita.');
+                            break;
+                    }
+                });
+            });
+
+            // Close context menu on click outside
+            document.addEventListener('click', (e) => {
+                if (!contextMenu.contains(e.target)) {
+                    hideContextMenu();
+                }
+            });
+
+            // Right click on main content
+            document.getElementById('mainContent').addEventListener('contextmenu', showContextMenu);
+
+            // Mouse move for glow effect
+            document.addEventListener('mousemove', updateGlowEffect);
+
+            // Tooltip positioning
+            document.addEventListener('mousemove', (e) => {
+                if (tooltip.classList.contains('visible')) {
+                    positionTooltip(e);
+                }
+            });
+
+            // Keyboard
+            document.addEventListener('keydown', handleKeyboard);
+
+            // Splash text rotation
+            setInterval(rotateSplashText, 4000);
+
+            // Profile click
+            document.getElementById('sidebarProfile').addEventListener('click', () => {
+                showNotification('info', 'Perfil', 'MinatoPlayer_2024 - Conta Premium');
+            });
+
+            document.getElementById('footerProfile').addEventListener('click', () => {
+                showNotification('info', 'Perfil', 'MinatoPlayer_2024 - Conta Premium');
+            });
+
+            // News cards hover effect
+            document.querySelectorAll('.news-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const title = card.querySelector('.news-card-title').textContent;
+                    showNotification('info', 'Notícia', title);
+                });
+            });
+
+            // Window resize handler
+            window.addEventListener('resize', () => {
+                // Adjust layout if needed
+            });
+
+            // Prevent default context menu
+            document.addEventListener('contextmenu', (e) => {
+                if (e.target.closest('.version-card') || e.target.closest('#mainContent')) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        function init() {
+            createParticles();
+            initEventListeners();
+            simulateLoading();
+
+            // Mostrar notificação de boas-vindas após loading
+            setTimeout(() => {
+                showNotification('info', 'Bem-vindo ao Minato Craft!', 'Launcher v2.4.1 - Java Edition');
+            }, 3000);
+
+            // Simular verificação de atualização
+            setTimeout(() => {
+                showNotification('success', 'Atualização disponível', `Nova versão ${currentVersion} pronta para jogar!`);
+            }, 5000);
+        }
+
+        // Iniciar quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', init);
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // ============================================
+        // ANIMAÇÕES DE ENTRADA
+        // ============================================
+        function animateEntrance() {
+            const elements = [
+                { el: '.game-logo-container', delay: 200 },
+                { el: '.splash-text', delay: 400 },
+                { el: '.version-cards', delay: 600 },
+                { el: '.play-button-container', delay: 800 },
+                { el: '.mini-info', delay: 1000 },
+                { el: '.footer-bar', delay: 1200 }
+            ];
+
+            elements.forEach(({ el, delay }) => {
+                setTimeout(() => {
+                    const element = document.querySelector(el);
+                    if (element) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }
+                }, delay);
+            });
+        }
+
+        // ============================================
+        // SISTEMA DE LOGS
+        // ============================================
+        const logger = {
+            info: (msg) => console.log(`%c[INFO] ${msg}`, 'color: #5bc0de'),
+            success: (msg) => console.log(`%c[SUCCESS] ${msg}`, 'color: #5cb85c'),
+            warning: (msg) => console.log(`%c[WARNING] ${msg}`, 'color: #f0ad4e'),
+            error: (msg) => console.log(`%c[ERROR] ${msg}`, 'color: #d9534f')
+        };
+
+        logger.info('Minato Craft Launcher inicializado');
+        logger.success('Todos os módulos carregados com sucesso');
+
+        // ============================================
+        // EFEITOS DE HOVER AVANÇADOS
+        // ============================================
+        function addHoverEffects() {
+            const interactiveElements = document.querySelectorAll('.sidebar-item, .version-card, .play-button, .news-card, .modal-option');
+
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+
+                el.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+            });
+        }
+
+        // ============================================
+        // SISTEMA DE TEMA
+        // ============================================
+        const themeManager = {
+            current: 'dark',
+            themes: {
+                dark: {
+                    '--bg-dark': '#1e1e1e',
+                    '--bg-sidebar': '#2d2d2d',
+                    '--text-primary': '#ffffff'
+                },
+                light: {
+                    '--bg-dark': '#f5f5f5',
+                    '--bg-sidebar': '#e0e0e0',
+                    '--text-primary': '#333333'
+                }
+            },
+            apply(theme) {
+                const root = document.documentElement;
+                const themeVars = this.themes[theme];
+                Object.entries(themeVars).forEach(([key, value]) => {
+                    root.style.setProperty(key, value);
+                });
+                this.current = theme;
+            }
+        };
+
+        // ============================================
+        // GERENCIADOR DE ESTADO
+        // ============================================
+        const stateManager = {
+            state: {
+                currentVersion: '1.21.4',
+                isPlaying: false,
+                ramAllocation: 4096,
+                notifications: [],
+                lastUpdate: null
+            },
+            get(key) {
+                return this.state[key];
+            },
+            set(key, value) {
+                this.state[key] = value;
+                logger.info(`Estado atualizado: ${key} = ${value}`);
+            },
+            save() {
+                try {
+                    localStorage.setItem('minatocraft_state', JSON.stringify(this.state));
+                } catch (e) {
+                    logger.error('Erro ao salvar estado: ' + e.message);
+                }
+            },
+            load() {
+                try {
+                    const saved = localStorage.getItem('minatocraft_state');
+                    if (saved) {
+                        this.state = { ...this.state, ...JSON.parse(saved) };
+                        logger.success('Estado carregado com sucesso');
+                    }
+                } catch (e) {
+                    logger.error('Erro ao carregar estado: ' + e.message);
+                }
+            }
+        };
+
+        // ============================================
+        // INICIALIZAÇÃO FINAL
+        // ============================================
+        window.addEventListener('load', () => {
+            stateManager.load();
+            addHoverEffects();
+            animateEntrance();
+            logger.success('Launcher totalmente inicializado');
+        });
+
+        // Prevenir fechamento acidental durante jogo
+        window.addEventListener('beforeunload', (e) => {
+            if (isPlaying) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // ============================================
+        // EASTER EGG - Konami Code
+        // ============================================
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    showNotification('success', '🎉 Easter Egg!', 'Você descobriu o código Konami! +100 blocos de diamante!');
+                    document.body.style.animation = 'rainbow 2s linear';
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // Adicionar animação rainbow dinamicamente
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        console.log('%c Minato Craft Launcher v2.4.1 ', 'background: #3c8527; color: white; font-size: 20px; padding: 10px; border-radius: 5px;');
+        console.log('%c Desenvolvido com ❤ para a comunidade Minato Craft ', 'color: #5cb85c; font-size: 12px;');
+    </script>
+</body>
+</html>
