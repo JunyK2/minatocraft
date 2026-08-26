@@ -32,6 +32,10 @@
     --danger: #ef4444;
     --warning: #f59e0b;
     --info: #3b82f6;
+    --purple: #a855f7;
+    --purple-glow: rgba(168, 85, 247, 0.4);
+    --cyan: #06b6d4;
+    --cyan-glow: rgba(6, 182, 212, 0.4);
   }
 
   html, body {
@@ -191,6 +195,79 @@
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
+  }
+
+  /* Script Buttons */
+  .script-btn {
+    padding: 8px 14px;
+    border: 1px solid;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .script-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .script-btn:hover::before {
+    left: 100%;
+  }
+
+  .script-btn:active {
+    transform: translateY(0);
+  }
+
+  .script-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    flex-shrink: 0;
+  }
+
+  .script-btn-v1 {
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #fff;
+    box-shadow: 0 2px 12px var(--purple-glow);
+  }
+
+  .script-btn-v1:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px var(--purple-glow);
+    background: linear-gradient(135deg, #b66dfa, #8b5cf6);
+  }
+
+  .script-btn-v2 {
+    background: linear-gradient(135deg, var(--cyan), #0891b2);
+    border-color: rgba(6, 182, 212, 0.4);
+    color: #fff;
+    box-shadow: 0 2px 12px var(--cyan-glow);
+  }
+
+  .script-btn-v2:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px var(--cyan-glow);
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
   }
 
   .user-profile {
@@ -1096,6 +1173,282 @@
     text-overflow: ellipsis;
   }
 
+  /* ===== SCRIPT MODAL (shared) ===== */
+  .script-modal {
+    background: var(--bg-panel-solid);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 560px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: slideUp 0.3s;
+  }
+
+  .script-modal.purple {
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px var(--purple-glow);
+  }
+
+  .script-modal.cyan {
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px var(--cyan-glow);
+  }
+
+  .script-modal-header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .script-modal.purple .script-modal-header {
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), transparent);
+  }
+
+  .script-modal.cyan .script-modal-header {
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), transparent);
+  }
+
+  .script-modal-header .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .script-modal-header .modal-title svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .script-modal.purple .script-modal-header .modal-title svg {
+    stroke: var(--purple);
+  }
+
+  .script-modal.cyan .script-modal-header .modal-title svg {
+    stroke: var(--cyan);
+  }
+
+  .script-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .copy-script-btn {
+    width: 100%;
+    padding: 16px 24px;
+    border: 1px solid;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .copy-script-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .copy-script-btn:hover::before {
+    left: 100%;
+  }
+
+  .copy-script-btn:active {
+    transform: translateY(0);
+  }
+
+  .copy-script-btn.purple {
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 4px 20px var(--purple-glow);
+  }
+
+  .copy-script-btn.purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--purple-glow);
+    background: linear-gradient(135deg, #b66dfa, #8b5cf6);
+  }
+
+  .copy-script-btn.cyan {
+    background: linear-gradient(135deg, var(--cyan), #0891b2);
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 20px var(--cyan-glow);
+  }
+
+  .copy-script-btn.cyan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--cyan-glow);
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  }
+
+  .copy-script-btn.copied {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    border-color: rgba(74, 222, 128, 0.4) !important;
+    box-shadow: 0 4px 20px var(--primary-glow) !important;
+  }
+
+  .copy-script-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .instructions {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .instructions-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .instructions-title svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--warning);
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .instruction-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .instruction-step:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .script-modal.purple .step-number {
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+  }
+
+  .script-modal.cyan .step-number {
+    background: linear-gradient(135deg, var(--cyan), #0891b2);
+  }
+
+  .step-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .step-text strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .step-text code {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .script-modal.purple .step-text code {
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+  }
+
+  .script-modal.cyan .step-text code {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--cyan);
+  }
+
+  .warning-box {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .warning-box svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--warning);
+    fill: none;
+    stroke-width: 2;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .warning-box-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .warning-box-text strong {
+    color: var(--warning);
+    font-weight: 700;
+  }
+
+  .warning-box-text code {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
   /* ===== LOADING ===== */
   .loading-overlay {
     position: fixed;
@@ -1157,6 +1510,9 @@
     .play-section {
       flex-wrap: wrap;
     }
+    .script-btn span {
+      display: none;
+    }
   }
 
   /* ===== ANIMATIONS ===== */
@@ -1215,6 +1571,22 @@
     fill: none;
     stroke-width: 3;
   }
+
+  .toast.purple {
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+
+  .toast.purple .toast-icon {
+    background: var(--purple);
+  }
+
+  .toast.cyan {
+    border-color: rgba(6, 182, 212, 0.4);
+  }
+
+  .toast.cyan .toast-icon {
+    background: var(--cyan);
+  }
 </style>
 </head>
 <body>
@@ -1232,6 +1604,14 @@
       </div>
     </div>
     <div class="header-actions">
+      <button class="script-btn script-btn-v1" onclick="openScriptModal('v1')">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>Script Redação</span>
+      </button>
+      <button class="script-btn script-btn-v2" onclick="openScriptModal('v2')">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>Script Redação v2</span>
+      </button>
       <div class="header-btn" title="Minimizar">
         <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
       </div>
@@ -1396,7 +1776,7 @@
   </footer>
 </div>
 
-<!-- MODAL -->
+<!-- VERSION MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
   <div class="modal">
     <div class="modal-header">
@@ -1411,6 +1791,112 @@
       <input type="text" class="search-input" id="searchInput" placeholder="Buscar versão..." oninput="filterVersions()">
     </div>
     <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- SCRIPT MODAL V1 -->
+<div class="modal-overlay" id="scriptModalV1Overlay" onclick="closeScriptModalOnBg(event, 'v1')">
+  <div class="script-modal purple">
+    <div class="script-modal-header">
+      <div class="modal-title">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Script Redação
+      </div>
+      <div class="modal-close" onclick="closeScriptModal('v1')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </div>
+    </div>
+    <div class="script-modal-body">
+      <button class="copy-script-btn purple" id="copyScriptBtnV1" onclick="copyScript('v1')">
+        <svg viewBox="0 0 24 24" id="copyIconV1"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span id="copyBtnTextV1">Copiar Script</span>
+      </button>
+
+      <div class="instructions">
+        <div class="instructions-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Como usar o script
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">1</div>
+          <div class="step-text">Abra o site onde deseja <strong>colar a redação</strong>.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">2</div>
+          <div class="step-text">Pressione <strong>F12</strong> para abrir as ferramentas de desenvolvedor.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">3</div>
+          <div class="step-text">Clique na aba <strong>Console</strong> na janela que se abriu.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">4</div>
+          <div class="step-text">Cole o código copiado e pressione <strong>Enter</strong>.</div>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="warning-box-text">
+          Se der algum erro, escreva <code>allow pasting</code> no console e cole o script novamente, depois pressione <strong>Enter</strong>. Assim você vai conseguir colar redações normalmente.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT MODAL V2 -->
+<div class="modal-overlay" id="scriptModalV2Overlay" onclick="closeScriptModalOnBg(event, 'v2')">
+  <div class="script-modal cyan">
+    <div class="script-modal-header">
+      <div class="modal-title">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Script Redação v2
+      </div>
+      <div class="modal-close" onclick="closeScriptModal('v2')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </div>
+    </div>
+    <div class="script-modal-body">
+      <button class="copy-script-btn cyan" id="copyScriptBtnV2" onclick="copyScript('v2')">
+        <svg viewBox="0 0 24 24" id="copyIconV2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span id="copyBtnTextV2">Copiar Script</span>
+      </button>
+
+      <div class="instructions">
+        <div class="instructions-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Como usar o script
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">1</div>
+          <div class="step-text">Abra o site onde deseja <strong>colar a redação</strong>.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">2</div>
+          <div class="step-text">Pressione <strong>F12</strong> para abrir as ferramentas de desenvolvedor.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">3</div>
+          <div class="step-text">Clique na aba <strong>Console</strong> na janela que se abriu.</div>
+        </div>
+        <div class="instruction-step">
+          <div class="step-number">4</div>
+          <div class="step-text">Cole o código copiado e pressione <strong>Enter</strong>.</div>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="warning-box-text">
+          Se der algum erro, escreva <code>allow pasting</code> no console e cole o script novamente, depois pressione <strong>Enter</strong>. Assim você vai conseguir colar redações normalmente.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1578,6 +2064,262 @@
     }
   ];
 
+  // ===== SCRIPT V1 =====
+  const scriptV1 = `(function() {
+    // 1. Remove as restrições de colagem e clique direito
+    const events = ['paste', 'contextmenu', 'drop', 'dragover', 'keydown', 'keyup'];
+    events.forEach(eventType => {
+        window.addEventListener(eventType, function(e) {
+            e.stopImmediatePropagation();
+        }, true);
+    });
+
+    // Habilita a seleção de texto e colagem via CSS
+    const css = '* { user-select: text !important; -webkit-user-select: text !important; }';
+    const style = document.createElement('style');
+    style.innerText = css;
+    document.head.appendChild(style);
+
+    // 2. Cria e exibe a mensagem na tela
+    const msg = document.createElement('div');
+    msg.innerText = 'Agora você pode colar textos!';
+    
+    // Estilização da mensagem (centralizada e moderna)
+    Object.assign(msg.style, {
+        position: 'fixed',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: '#2ecc71',
+        color: '#ffffff',
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        fontFamily: 'sans-serif',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+        zIndex: '999999',
+        transition: 'opacity 0.5s ease'
+    });
+
+    document.body.appendChild(msg);
+
+    // 3. Remove a mensagem após 3 segundos
+    setTimeout(() => {
+        msg.style.opacity = '0';
+        setTimeout(() => msg.remove(), 500);
+    }, 3000);
+})();`;
+
+  // ===== SCRIPT V2 =====
+  const scriptV2 = `// PARTE 1 - ESTRUTURA VISUAL, DESBLOQUEIOS GERAIS E NOVO BOTÃO
+(function() {
+    window.AssistenteRedacaoLogs = [];
+    window.AssistenteRedacaoLogRef = null;
+
+    window.addAssistenteLog = function(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const fullLog = \`[\${timestamp}] \${message}\`;
+        window.AssistenteRedacaoLogs.push(fullLog);
+        console.log(fullLog);
+        if (window.AssistenteRedacaoLogRef) {
+            window.AssistenteRedacaoLogRef.value = window.AssistenteRedacaoLogs.join('\\n');
+            window.AssistenteRedacaoLogRef.scrollTop = window.AssistenteRedacaoLogRef.scrollHeight;
+        }
+    };
+
+    window.showAssistenteNotification = function(text, bgColor) {
+        const msg = document.createElement('div');
+        msg.innerText = text;
+        Object.assign(msg.style, {
+            position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+            backgroundColor: bgColor, color: '#ffffff', padding: '12px 24px',
+            borderRadius: '8px', fontSize: '16px', fontWeight: 'bold',
+            zIndex: '1000001', transition: 'opacity 0.5s ease', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        });
+        document.body.appendChild(msg);
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 500);
+        }, 3500);
+    };
+
+    window.addAssistenteLog('Iniciando desbloqueio de travas do site...');
+    const events = ['paste', 'contextmenu', 'drop', 'dragover', 'keydown', 'keyup'];
+    events.forEach(eventType => {
+        window.addEventListener(eventType, function(e) { e.stopImmediatePropagation(); }, true);
+    });
+    const style = document.createElement('style');
+    style.innerText = '* { user-select: text !important; -webkit-user-select: text !important; }';
+    document.head.appendChild(style);
+    window.addAssistenteLog('Removido bloqueios de botão direito e colagem via CSS/Eventos.');
+    window.showAssistenteNotification('Agora você pode colar textos!', '#2ecc71');
+
+    const container = document.createElement('div');
+    container.id = 'assistente-container-principal';
+    Object.assign(container.style, {
+        position: 'fixed', bottom: '20px', right: '20px', width: '360px',
+        backgroundColor: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '12px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.15)', zIndex: '999999',
+        fontFamily: 'system-ui, -apple-system, sans-serif', padding: '15px',
+        display: 'flex', flexDirection: 'column', gap: '10px'
+    });
+
+    const header = document.createElement('div');
+    Object.assign(header.style, { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold', fontSize: '14px', color: '#333' });
+    header.innerHTML = '<span>Copiador de Temas & Prompts</span>';
+    
+    const closeBtn = document.createElement('span');
+    closeBtn.innerText = '✕';
+    Object.assign(closeBtn.style, { cursor: 'pointer', color: '#999', fontSize: '16px', padding: '0 5px' });
+    closeBtn.onclick = () => {
+        container.remove();
+        const lWin = document.getElementById('assistente-janela-logs');
+        if (lWin) lWin.remove();
+        window.addAssistenteLog('Assistente fechado.');
+    };
+    header.appendChild(closeBtn);
+    container.appendChild(header);
+
+    // Linha de botões superior
+    const buttonRow = document.createElement('div');
+    Object.assign(buttonRow.style, { display: 'flex', gap: '8px' });
+
+    window.assistenteGenerateBtn = document.createElement('button');
+    window.assistenteGenerateBtn.innerText = 'Capturar Tema';
+    Object.assign(window.assistenteGenerateBtn.style, { flex: '2', backgroundColor: '#2980b9', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' });
+
+    const logBtn = document.createElement('button');
+    logBtn.innerText = 'Ver Logs';
+    Object.assign(logBtn.style, { flex: '1', backgroundColor: '#7f8c8d', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' });
+
+    buttonRow.appendChild(window.assistenteGenerateBtn);
+    buttonRow.appendChild(logBtn);
+    container.appendChild(buttonRow);
+
+    // NOVO BOTÃO: Fazer Redação (Abre o site google.com/ai)
+    const actionBtn = document.createElement('button');
+    actionBtn.innerText = 'Fazer Redação';
+    Object.assign(actionBtn.style, { 
+        width: '100%', backgroundColor: '#e67e22', color: '#ffffff', border: 'none', 
+        padding: '10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' 
+    });
+    actionBtn.onclick = () => {
+        window.addAssistenteLog('Redirecionando para o ambiente de IA (google.com/ai)...');
+        window.open('https://google.com', '_blank');
+    };
+    container.appendChild(actionBtn);
+
+    window.assistenteOutputText = document.createElement('textarea');
+    window.assistenteOutputText.placeholder = 'O prompt estruturado com o tema aparecerá aqui...';
+    Object.assign(window.assistenteOutputText.style, { width: '100%', height: '180px', borderRadius: '6px', border: '1px solid #ccc', padding: '8px', fontSize: '13px', resize: 'none', boxSizing: 'border-box' });
+    container.appendChild(window.assistenteOutputText);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.innerText = 'Copiar Prompt Pronto';
+    Object.assign(copyBtn.style, { backgroundColor: '#27ae60', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' });
+    copyBtn.onclick = () => {
+        if (!window.assistenteOutputText.value) { window.addAssistenteLog('Aviso: Caixa vazia.'); return; }
+        window.assistenteOutputText.select();
+        document.execCommand('copy');
+        window.addAssistenteLog('Prompt copiado para a área de transferência com sucesso.');
+        window.showAssistenteNotification('Prompt Copiado! Cole na sua IA de preferência.', '#2ecc71');
+    };
+    container.appendChild(copyBtn);
+    document.body.appendChild(container);
+
+    logBtn.onclick = () => {
+        let lWin = document.getElementById('assistente-janela-logs');
+        if (lWin) { lWin.style.display = lWin.style.display === 'none' ? 'flex' : 'none'; return; }
+        lWin = document.createElement('div');
+        lWin.id = 'assistente-janela-logs';
+        Object.assign(lWin.style, { position: 'fixed', bottom: '20px', right: '390px', width: '400px', height: '350px', backgroundColor: '#1c1c24', border: '1px solid #2d2d3d', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', zIndex: '999999', fontFamily: 'monospace', padding: '15px', display: 'flex', flexDirection: 'column', gap: '10px' });
+        const logHeader = document.createElement('div');
+        Object.assign(logHeader.style, { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold', fontSize: '13px', color: '#00b0ff' });
+        logHeader.innerHTML = '<span>Console de Logs em Tempo Real</span>';
+        const closeLogBtn = document.createElement('span');
+        closeLogBtn.innerText = '✕';
+        Object.assign(closeLogBtn.style, { cursor: 'pointer', color: '#7a7a8a', fontSize: '14px' });
+        closeLogBtn.onclick = () => lWin.style.display = 'none';
+        logHeader.appendChild(closeLogBtn);
+        lWin.appendChild(logHeader);
+        window.AssistenteRedacaoLogRef = document.createElement('textarea');
+        window.AssistenteRedacaoLogRef.readOnly = true;
+        Object.assign(window.AssistenteRedacaoLogRef.style, { width: '100%', flex: '1', backgroundColor: '#13131a', color: '#f4f4f6', border: '1px solid #2d2d3d', borderRadius: '6px', padding: '8px', fontSize: '12px', resize: 'none', boxSizing: 'border-box' });
+        window.AssistenteRedacaoLogRef.value = window.AssistenteRedacaoLogs.join('\\n');
+        lWin.appendChild(window.AssistenteRedacaoLogRef);
+        const copyLogsBtn = document.createElement('button');
+        copyLogsBtn.innerText = 'Copiar Logs';
+        Object.assign(copyLogsBtn.style, { backgroundColor: '#00b0ff', color: '#11111b', border: 'none', padding: '8px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' });
+        copyLogsBtn.onclick = () => { window.AssistenteRedacaoLogRef.select(); document.execCommand('copy'); window.showAssistenteNotification('Logs copiados!', '#00b0ff'); };
+        lWin.appendChild(copyLogsBtn);
+        document.body.appendChild(lWin);
+        window.AssistenteRedacaoLogRef.scrollTop = window.AssistenteRedacaoLogRef.scrollHeight;
+    };
+    window.addAssistenteLog('Interface de extração manual com redirecionador carregada.');
+})();
+// PARTE 2 - VARREDURA DO TEMA E COMPOSIÇÃO DO PROMPT
+(function() {
+    if (!window.assistenteGenerateBtn) {
+        console.error('Execute a Parte 1 primeiro!');
+        return;
+    }
+
+    window.assistenteGenerateBtn.onclick = () => {
+        window.addAssistenteLog('Escaneando a página procurando o marcador "Tema:"...');
+        let theme = '';
+        const elements = Array.from(document.querySelectorAll('*'));
+        
+        for (let el of elements) {
+            if (el.children.length === 0 && el.textContent.includes('Tema:')) {
+                let text = el.textContent;
+                let index = text.indexOf('Tema:');
+                let foundTheme = text.substring(index + 5).trim();
+                
+                if (!foundTheme && el.nextElementSibling) {
+                    foundTheme = el.nextElementSibling.textContent.trim();
+                }
+                
+                if (foundTheme) {
+                    theme = foundTheme;
+                    break;
+                }
+            }
+        }
+
+        if (!theme) {
+            window.addAssistenteLog('Erro ao localizar a marcação. Tentando varredura secundária por inputs...');
+            const fallbacks = Array.from(document.querySelectorAll('h1, h2, h3, input, span'));
+            for(let f of fallbacks) {
+                if(f.value && f.value.includes('Tema:')) {
+                    theme = f.value.split('Tema:')[1].trim();
+                    break;
+                }
+                if(f.textContent && f.textContent.includes('Tema:')) {
+                    theme = f.textContent.split('Tema:')[1].trim();
+                    break;
+                }
+            }
+        }
+
+        if (!theme) {
+            window.addAssistenteLog('Erro crítico: Não foi possível mapear a palavra "Tema:" na tela.');
+            window.showAssistenteNotification('Erro: Termo "Tema:" não encontrado.', '#e74c3c');
+            window.assistenteOutputText.value = 'Não achei o marcador "Tema:". Digite ou cole o tema aqui manualmente antes de clicar em Copiar.';
+            return;
+        }
+
+        window.addAssistenteLog(\`Sucesso! Tema localizado: "\${theme}"\`);
+        
+        const promptFinal = \`gere uma redação com esse tema: "\${theme}". faça com 3 paragrafos 225 palavras e um titulo.\`;
+        
+        window.assistenteOutputText.value = promptFinal;
+        window.addAssistenteLog('Prompt estruturado inserido no campo de texto.');
+        window.showAssistenteNotification('Tema capturado! Clique em Copiar e depois em Fazer Redação.', '#2ecc71');
+    };
+    window.addAssistenteLog('Parte 2 ativada. O robô está pronto para rodar.');
+})();`;
+
   // ===== STATE =====
   let selectedVersionIndex = 0;
 
@@ -1666,7 +2408,7 @@
     }, 1500);
   }
 
-  // ===== MODAL =====
+  // ===== VERSION MODAL =====
   function openModal() {
     document.getElementById('modalOverlay').classList.add('active');
     document.getElementById('searchInput').value = '';
@@ -1687,9 +2429,84 @@
     renderModalVersions(val);
   }
 
+  // ===== SCRIPT MODALS =====
+  function openScriptModal(version) {
+    const overlayId = version === 'v1' ? 'scriptModalV1Overlay' : 'scriptModalV2Overlay';
+    document.getElementById(overlayId).classList.add('active');
+    resetCopyButton(version);
+  }
+
+  function closeScriptModal(version) {
+    const overlayId = version === 'v1' ? 'scriptModalV1Overlay' : 'scriptModalV2Overlay';
+    document.getElementById(overlayId).classList.remove('active');
+  }
+
+  function closeScriptModalOnBg(e, version) {
+    const overlayId = version === 'v1' ? 'scriptModalV1Overlay' : 'scriptModalV2Overlay';
+    if (e.target.id === overlayId) closeScriptModal(version);
+  }
+
+  function resetCopyButton(version) {
+    const btn = document.getElementById(`copyScriptBtn${version.toUpperCase()}`);
+    const btnText = document.getElementById(`copyBtnText${version.toUpperCase()}`);
+    const btnIcon = document.getElementById(`copyIcon${version.toUpperCase()}`);
+    btn.classList.remove('copied');
+    btnText.textContent = 'Copiar Script';
+    btnIcon.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+  }
+
+  function copyScript(version) {
+    const content = version === 'v1' ? scriptV1 : scriptV2;
+    const btn = document.getElementById(`copyScriptBtn${version.toUpperCase()}`);
+    const btnText = document.getElementById(`copyBtnText${version.toUpperCase()}`);
+    const btnIcon = document.getElementById(`copyIcon${version.toUpperCase()}`);
+
+    const doSuccess = () => {
+      btn.classList.add('copied');
+      btnText.textContent = '✓ Copiado!';
+      btnIcon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      showToastColored(`📋 Script ${version === 'v1' ? '' : 'v2 '}copiado!`, version);
+
+      setTimeout(() => {
+        resetCopyButton(version);
+      }, 3000);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(content).then(doSuccess).catch(() => {
+        fallbackCopy(content);
+        doSuccess();
+      });
+    } else {
+      fallbackCopy(content);
+      doSuccess();
+    }
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(textarea);
+  }
+
   // ===== TOAST =====
   function showToast(text) {
     const toast = document.getElementById('toast');
+    toast.classList.remove('purple', 'cyan');
+    document.getElementById('toastText').textContent = text;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function showToastColored(text, version) {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('purple', 'cyan');
+    toast.classList.add(version);
     document.getElementById('toastText').textContent = text;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
@@ -1706,8 +2523,12 @@
 
   // ===== KEYBOARD SHORTCUTS =====
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'Enter' && !document.getElementById('modalOverlay').classList.contains('active')) {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeScriptModal('v1');
+      closeScriptModal('v2');
+    }
+    if (e.key === 'Enter' && !document.getElementById('modalOverlay').classList.contains('active') && !document.getElementById('scriptModalV1Overlay').classList.contains('active') && !document.getElementById('scriptModalV2Overlay').classList.contains('active')) {
       playGame();
     }
   });
