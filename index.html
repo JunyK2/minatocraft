@@ -36,6 +36,9 @@
     --purple-glow: rgba(168, 85, 247, 0.4);
     --cyan: #06b6d4;
     --cyan-glow: rgba(6, 182, 212, 0.4);
+    --red: #ef4444;
+    --red-dark: #dc2626;
+    --red-glow: rgba(239, 68, 68, 0.4);
   }
 
   html, body {
@@ -268,6 +271,19 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 20px var(--cyan-glow);
     background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  }
+
+  .script-btn-quiz {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fff;
+    box-shadow: 0 2px 12px var(--red-glow);
+  }
+
+  .script-btn-quiz:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px var(--red-glow);
+    background: linear-gradient(135deg, #f87171, #ef4444);
   }
 
   .user-profile {
@@ -1494,7 +1510,7 @@
   }
 
   /* ===== RESPONSIVE ===== */
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     .launcher {
       grid-template-columns: 1fr;
     }
@@ -1512,6 +1528,9 @@
     }
     .script-btn span {
       display: none;
+    }
+    .script-btn {
+      padding: 8px 10px;
     }
   }
 
@@ -1587,6 +1606,14 @@
   .toast.cyan .toast-icon {
     background: var(--cyan);
   }
+
+  .toast.red {
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+
+  .toast.red .toast-icon {
+    background: var(--red);
+  }
 </style>
 </head>
 <body>
@@ -1611,6 +1638,10 @@
       <button class="script-btn script-btn-v2" onclick="openScriptModal('v2')">
         <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <span>Script Redação v2</span>
+      </button>
+      <button class="script-btn script-btn-quiz" onclick="copyQuizScript()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Script Quiz</span>
       </button>
       <div class="header-btn" title="Minimizar">
         <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
@@ -1918,150 +1949,24 @@
 <script>
   // ===== VERSIONS DATABASE =====
   const versions = [
-    {
-      name: "1.8 Eaglercraft",
-      url: "https://junyk2.github.io/minato",
-      tag: "release",
-      tagLabel: "Padrão",
-      category: "Vanilla",
-      description: "Versão padrão do launcher"
-    },
-    {
-      name: "GX-Client (1.8.8-u53)",
-      url: "https://gx-launcher.github.io/game/GX-Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "GX Client otimizado"
-    },
-    {
-      name: "Tuff Client (1.12.2-u2)",
-      url: "https://gx-launcher.github.io/game/Tuff%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "Tuff Client estável"
-    },
-    {
-      name: "EB Client (1.8.8-u53)",
-      url: "https://gx-launcher.github.io/game/EB%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "EB Client para 1.8.8"
-    },
-    {
-      name: "Eclipse Client (1.8.8-u53)",
-      url: "https://gx-launcher.github.io/game/Eclipse%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "Eclipse Client avançado"
-    },
-    {
-      name: "Pixel Client (1.12.2-u2)",
-      url: "https://gx-launcher.github.io/game/Pixel%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "Pixel Client para 1.12.2"
-    },
-    {
-      name: "Resent Client (1.8.8-u53)",
-      url: "https://gx-launcher.github.io/game/Resent%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "Resent Client moderno"
-    },
-    {
-      name: "Eaglerforge (1.8.8-u31)",
-      url: "https://gx-launcher.github.io/game/Eaglerforge/index.html",
-      tag: "release",
-      tagLabel: "Forge",
-      category: "Forge",
-      description: "Forge para Eaglercraft"
-    },
-    {
-      name: "Forge 1.6.4",
-      url: "https://gx-launcher.github.io/game/Forge%201.6.4/index.html",
-      tag: "release",
-      tagLabel: "Forge",
-      category: "Forge",
-      description: "Forge clássico 1.6.4"
-    },
-    {
-      name: "Tuff Client Beta 1.12.2",
-      url: "https://gx-launcher.github.io/game/Tuff%20Client%20Beta/index.html",
-      tag: "beta",
-      tagLabel: "Beta",
-      category: "Client",
-      description: "Tuff Client em beta"
-    },
-    {
-      name: "Modern Client (1.12.2-u2)",
-      url: "https://gx-launcher.github.io/game/Modern%20Client/index.html",
-      tag: "client",
-      tagLabel: "Client",
-      category: "Client",
-      description: "Modern Client atualizado"
-    },
-    {
-      name: "26.1.2 (u1)",
-      url: "https://gx-launcher.github.io/game/26.1.2-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Versão WebAssembly"
-    },
-    {
-      name: "1.21.11 (u1)",
-      url: "https://gx-launcher.github.io/game/1.21.11-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Minecraft 1.21.11 WASM"
-    },
-    {
-      name: "1.17.1 (u1)",
-      url: "https://gx-launcher.github.io/game/1.17.1-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Minecraft 1.17.1 WASM"
-    },
-    {
-      name: "1.16.5 (u2)",
-      url: "https://gx-launcher.github.io/game/1.16.5-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Minecraft 1.16.5 WASM u2"
-    },
-    {
-      name: "1.16.5 (u1)",
-      url: "https://gx-launcher.github.io/game/1.16.5/index.html",
-      tag: "release",
-      tagLabel: "Release",
-      category: "Vanilla",
-      description: "Minecraft 1.16.5 estável"
-    },
-    {
-      name: "1.14.4 (u0)",
-      url: "https://gx-launcher.github.io/game/1.14.4-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Minecraft 1.14.4 WASM"
-    },
-    {
-      name: "1.12.2 (u3)",
-      url: "https://gx-launcher.github.io/game/1.12.2-wasm/index.html",
-      tag: "wasm",
-      tagLabel: "WASM",
-      category: "WASM",
-      description: "Minecraft 1.12.2 WASM"
-    }
+    { name: "1.8 Eaglercraft", url: "https://junyk2.github.io/minato", tag: "release", tagLabel: "Padrão", category: "Vanilla", description: "Versão padrão do launcher" },
+    { name: "GX-Client (1.8.8-u53)", url: "https://gx-launcher.github.io/game/GX-Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "GX Client otimizado" },
+    { name: "Tuff Client (1.12.2-u2)", url: "https://gx-launcher.github.io/game/Tuff%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "Tuff Client estável" },
+    { name: "EB Client (1.8.8-u53)", url: "https://gx-launcher.github.io/game/EB%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "EB Client para 1.8.8" },
+    { name: "Eclipse Client (1.8.8-u53)", url: "https://gx-launcher.github.io/game/Eclipse%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "Eclipse Client avançado" },
+    { name: "Pixel Client (1.12.2-u2)", url: "https://gx-launcher.github.io/game/Pixel%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "Pixel Client para 1.12.2" },
+    { name: "Resent Client (1.8.8-u53)", url: "https://gx-launcher.github.io/game/Resent%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "Resent Client moderno" },
+    { name: "Eaglerforge (1.8.8-u31)", url: "https://gx-launcher.github.io/game/Eaglerforge/index.html", tag: "release", tagLabel: "Forge", category: "Forge", description: "Forge para Eaglercraft" },
+    { name: "Forge 1.6.4", url: "https://gx-launcher.github.io/game/Forge%201.6.4/index.html", tag: "release", tagLabel: "Forge", category: "Forge", description: "Forge clássico 1.6.4" },
+    { name: "Tuff Client Beta 1.12.2", url: "https://gx-launcher.github.io/game/Tuff%20Client%20Beta/index.html", tag: "beta", tagLabel: "Beta", category: "Client", description: "Tuff Client em beta" },
+    { name: "Modern Client (1.12.2-u2)", url: "https://gx-launcher.github.io/game/Modern%20Client/index.html", tag: "client", tagLabel: "Client", category: "Client", description: "Modern Client atualizado" },
+    { name: "26.1.2 (u1)", url: "https://gx-launcher.github.io/game/26.1.2-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Versão WebAssembly" },
+    { name: "1.21.11 (u1)", url: "https://gx-launcher.github.io/game/1.21.11-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Minecraft 1.21.11 WASM" },
+    { name: "1.17.1 (u1)", url: "https://gx-launcher.github.io/game/1.17.1-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Minecraft 1.17.1 WASM" },
+    { name: "1.16.5 (u2)", url: "https://gx-launcher.github.io/game/1.16.5-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Minecraft 1.16.5 WASM u2" },
+    { name: "1.16.5 (u1)", url: "https://gx-launcher.github.io/game/1.16.5/index.html", tag: "release", tagLabel: "Release", category: "Vanilla", description: "Minecraft 1.16.5 estável" },
+    { name: "1.14.4 (u0)", url: "https://gx-launcher.github.io/game/1.14.4-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Minecraft 1.14.4 WASM" },
+    { name: "1.12.2 (u3)", url: "https://gx-launcher.github.io/game/1.12.2-wasm/index.html", tag: "wasm", tagLabel: "WASM", category: "WASM", description: "Minecraft 1.12.2 WASM" }
   ];
 
   // ===== SCRIPT V1 =====
@@ -2181,7 +2086,6 @@
     header.appendChild(closeBtn);
     container.appendChild(header);
 
-    // Linha de botões superior
     const buttonRow = document.createElement('div');
     Object.assign(buttonRow.style, { display: 'flex', gap: '8px' });
 
@@ -2197,7 +2101,6 @@
     buttonRow.appendChild(logBtn);
     container.appendChild(buttonRow);
 
-    // NOVO BOTÃO: Fazer Redação (Abre o site google.com/ai)
     const actionBtn = document.createElement('button');
     actionBtn.innerText = 'Fazer Redação';
     Object.assign(actionBtn.style, { 
@@ -2319,6 +2222,311 @@
     };
     window.addAssistenteLog('Parte 2 ativada. O robô está pronto para rodar.');
 })();`;
+
+  // ===== SCRIPT QUIZ =====
+  const scriptQuiz = `// ====================================================================
+// QUIZ BOT WAYGROUND (Versão Segura: API Key na Interface)
+// ====================================================================
+
+const API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "openai/gpt-oss-120b";
+
+// A chave será carregada do armazenamento local ou ficará vazia
+let GROQ_API_KEY = localStorage.getItem('wayground_groq_api_key') || "";
+let isRunning = false;
+let stopRequested = false;
+
+function createUI() {
+    const existing = document.getElementById('quizBotUI');
+    if (existing) existing.remove();
+
+    const ui = document.createElement('div');
+    ui.id = 'quizBotUI';
+    ui.style.cssText = \`
+        position: fixed; top: 10px; right: 10px; width: 550px; max-height: 80vh;
+        background: #1a1a2e; border: 2px solid #0f3460; border-radius: 10px;
+        padding: 15px; z-index: 999999; font-family: 'Segoe UI', monospace; color: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 13px;
+    \`;
+
+    ui.innerHTML = \`
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #0f3460; padding-bottom:10px;">
+            <h3 style="margin:0; color:#e94560; font-family:sans-serif;">🤖 Quiz Bot Wayground</h3>
+            <button id="btnClose" style="background:#e94560; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">✕</button>
+        </div>
+        
+        <div style="margin-bottom: 10px; padding: 10px; background: #0f3460; border-radius: 5px; border: 1px solid #1a1a2e;">
+            <label style="font-size: 11px; color: #aaa; display: block; margin-bottom: 5px;">🔑 Chave da API Groq (gsk_...):</label>
+            <div style="display: flex; gap: 5px;">
+                <input type="password" id="apiKeyInput" placeholder="Cole sua chave aqui" value="\${GROQ_API_KEY}" style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #555; background: #1a1a2e; color: #00ff88; font-family: monospace; font-size: 12px; outline: none;">
+                <button id="btnSaveKey" style="background: #00ff88; border: none; color: #1a1a2e; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">💾 Salvar</button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:10px; display:flex; gap:5px; flex-wrap:wrap;">
+            <button id="btnStart" style="background:#00d9ff; border:none; color:#1a1a2e; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">▶ Começar</button>
+            <button id="btnStop" style="background:#e94560; border:none; color:white; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;" disabled>⏹ Parar</button>
+            <button id="btnTestRight" style="background:#ffaa00; border:none; color:#1a1a2e; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">➡ Testar Seta</button>
+            <button id="btnTest1" style="background:#533483; border:none; color:white; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">1️⃣ Testar Tecla 1</button>
+            <button id="btnCopy" style="background:#333; border:1px solid #555; color:white; padding:8px 15px; border-radius:5px; cursor:pointer; font-size:12px;">📋 Copiar</button>
+        </div>
+        
+        <div style="background:#0a0a1a; border-radius:5px; padding:10px; max-height:400px; overflow-y:auto; border: 1px solid #0f3460;" id="logBox"></div>
+        
+        <div style="margin-top:10px; font-size:11px; color:#888; text-align:center;">
+            Status: <span id="statusText" style="color:#00d9ff;">Aguardando...</span>
+        </div>
+    \`;
+
+    document.body.appendChild(ui);
+
+    document.getElementById('btnClose').onclick = () => ui.remove();
+    document.getElementById('btnStart').onclick = startBot;
+    document.getElementById('btnStop').onclick = stopBot;
+    
+    document.getElementById('btnTestRight').onclick = () => {
+        simulateKey('ArrowRight');
+        addLog('➡️ AÇÃO MANUAL: Seta Direita enviada.', 'warning');
+    };
+    document.getElementById('btnTest1').onclick = () => {
+        simulateKey('1');
+        addLog('1️⃣ AÇÃO MANUAL: Tecla 1 enviada.', 'warning');
+    };
+    
+    document.getElementById('btnCopy').onclick = () => {
+        navigator.clipboard.writeText(document.getElementById('logBox').innerText);
+        addLog('📋 Logs copiados!', 'success');
+    };
+
+    document.getElementById('btnSaveKey').onclick = () => {
+        const key = document.getElementById('apiKeyInput').value.trim();
+        if (key.startsWith('gsk_') || key.length > 20) {
+            GROQ_API_KEY = key;
+            localStorage.setItem('wayground_groq_api_key', key);
+            addLog('🔑 Chave da API salva com sucesso no navegador!', 'success');
+        } else if (key === "") {
+            localStorage.removeItem('wayground_groq_api_key');
+            GROQ_API_KEY = "";
+            addLog('🗑️ Chave da API removida.', 'warning');
+        } else {
+            addLog('⚠️ Formato de chave inválido. Deve começar com "gsk_".', 'error');
+        }
+    };
+}
+
+function addLog(msg, type = 'info') {
+    const box = document.getElementById('logBox');
+    if (!box) return;
+    const time = new Date().toLocaleTimeString();
+    const colors = { info: '#00d9ff', success: '#00ff88', error: '#ff4444', warning: '#ffaa00', api: '#e94560', debug: '#888' };
+    const div = document.createElement('div');
+    div.style.cssText = \`margin-bottom:4px; padding:3px; border-left:3px solid \${colors[type]}; padding-left:8px; word-wrap: break-word;\`;
+    div.innerHTML = \`<span style="color:#666">[\${time}]</span> <span style="color:\${colors[type]}">\${msg}</span>\`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+
+function simulateKey(key) {
+    const map = {
+        'ArrowRight': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39, which: 39 },
+        '1': { key: '1', code: 'Digit1', keyCode: 49, which: 49 },
+        '2': { key: '2', code: 'Digit2', keyCode: 50, which: 50 },
+        '3': { key: '3', code: 'Digit3', keyCode: 51, which: 51 },
+        '4': { key: '4', code: 'Digit4', keyCode: 52, which: 52 }
+    };
+    const k = map[key] || { key, code: key, keyCode: 0, which: 0 };
+
+    document.body.focus();
+    document.body.click(); 
+
+    const targets = [window, document, document.body, document.activeElement];
+    targets.forEach(target => {
+        if (!target) return;
+        ['keydown', 'keypress', 'keyup'].forEach(type => {
+            const event = new KeyboardEvent(type, {
+                key: k.key, code: k.code, keyCode: k.keyCode, which: k.which,
+                bubbles: true, cancelable: true, view: window
+            });
+            target.dispatchEvent(event);
+        });
+    });
+}
+
+function tryClickNavigation() {
+    const selectors = [
+        'button[class*="next"]', 'button[class*="Next"]', 'button[class*="avançar"]',
+        'button[class*="continue"]', 'button[class*="arrow-right"]', 'button[class*="forward"]',
+        'div[role="button"][class*="next"]', 'div[role="button"][class*="continue"]'
+    ];
+    for (let sel of selectors) {
+        const el = document.querySelector(sel);
+        if (el && el.offsetParent !== null) {
+            el.click();
+            addLog(\`🖱️ Clicado botão de avanço real: \${sel}\`, 'debug');
+            return true;
+        }
+    }
+    return false;
+}
+
+async function callGroq(question, alternatives) {
+    const prompt = \`PERGUNTA: \${question}
+ALTERNATIVAS:
+1. \${alternatives[0] || 'N/A'}
+2. \${alternatives[1] || 'N/A'}
+3. \${alternatives[2] || 'N/A'}
+4. \${alternatives[3] || 'N/A'}
+
+Instruções:
+1. Pense passo a passo sobre qual é a resposta correta.
+2. No FINAL absoluto da sua resposta, coloque APENAS o número da alternativa correta entre colchetes, assim: [2]\`;
+
+    try {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Authorization': \`Bearer \${GROQ_API_KEY}\`
+            },
+            body: JSON.stringify({
+                model: MODEL,
+                messages: [{ role: "user", content: prompt }],
+                temperature: 0.5,
+                max_tokens: 500,
+                reasoning_effort: "low"
+            })
+        });
+        
+        if (!res.ok) {
+            const errText = await res.text();
+            if (res.status === 401) {
+                throw new Error("Chave da API inválida ou expirada (Erro 401). Verifique o campo de API Key.");
+            }
+            throw new Error(\`HTTP \${res.status}: \${errText}\`);
+        }
+        
+        const data = await res.json();
+        const message = data.choices[0].message;
+        
+        addLog(\`Resposta da IA recebida.\`, 'debug');
+        
+        const match = message.content.match(/\\[\\s*([1-4])\\s*\\]/) || message.content.match(/[1-4]/);
+        
+        if (match) {
+            const answer = parseInt(match[1] || match[0]);
+            addLog(\`✅ Número extraído: \${answer}\`, 'success');
+            return answer;
+        } else {
+            throw new Error("Não foi possível extrair um número (1-4) da resposta.");
+        }
+        
+    } catch (e) {
+        addLog(\`❌ Erro API: \${e.message}\`, 'error');
+        return null;
+    }
+}
+
+function getQuestionData() {
+    let question = '';
+    const headings = Array.from(document.querySelectorAll('h1, h2, h3, .question-text, [class*="question"], [class*="prompt"]'));
+    for (let h of headings) {
+        if (h.innerText.trim().length > 20) {
+            question = h.innerText.trim();
+            break;
+        }
+    }
+
+    const alternatives = [];
+    const buttons = Array.from(document.querySelectorAll('button, [role="button"], .option, .answer, [class*="option"], [class*="answer"]'));
+    
+    for (let btn of buttons) {
+        const text = btn.innerText.trim();
+        if (text.length > 15 && text.length < 400 && text !== question && !alternatives.includes(text)) {
+            alternatives.push(text);
+            if (alternatives.length === 4) break;
+        }
+    }
+
+    return { question: question || 'Pergunta não detectada', alternatives };
+}
+
+async function mainLoop() {
+    let attempts = 0;
+    const maxAttempts = 500;
+
+    while (isRunning && !stopRequested && attempts < maxAttempts) {
+        attempts++;
+        
+        const data = getQuestionData();
+        
+        if (data.alternatives.length >= 3) {
+            addLog(\`✅ TELA DE PERGUNTA DETECTADA! (Alternativas: \${data.alternatives.length})\`, 'success');
+            addLog(\`❓ \${data.question.substring(0, 120)}...\`, 'info');
+            
+            document.getElementById('statusText').innerText = 'Consultando IA...';
+            const answer = await callGroq(data.question, data.alternatives);
+            
+            if (answer) {
+                addLog(\`🎯 Resposta escolhida: Alternativa \${answer}\`, 'success');
+                simulateKey(answer.toString());
+                addLog(\`⌨️ Tecla \${answer} pressionada!\`, 'success');
+                await new Promise(r => setTimeout(r, 2500));
+            } else {
+                addLog(\`⚠️ IA falhou em responder. Tentando avançar...\`, 'warning');
+                tryClickNavigation() || simulateKey('ArrowRight');
+                await new Promise(r => setTimeout(r, 1500));
+            }
+        } else {
+            addLog(\`➡️ Pergunta não detectada (alt: \${data.alternatives.length}). Avançando...\`, 'warning');
+            tryClickNavigation() || simulateKey('ArrowRight');
+            await new Promise(r => setTimeout(r, 600));
+        }
+    }
+
+    if (isRunning) {
+        mainLoop();
+    } else {
+        addLog('🛑 Bot parado pelo usuário.', 'warning');
+        document.getElementById('statusText').innerText = 'Parado';
+    }
+}
+
+function startBot() {
+    if (!GROQ_API_KEY) {
+        addLog('❌ ERRO: Por favor, cole e salve sua Chave da API Groq no campo acima antes de começar.', 'error');
+        return;
+    }
+    if (isRunning) return;
+    
+    isRunning = true;
+    stopRequested = false;
+    document.getElementById('btnStart').disabled = true;
+    document.getElementById('btnStop').disabled = false;
+    document.getElementById('statusText').innerText = 'Rodando';
+    addLog('✅ BOT INICIADO!', 'success');
+    
+    document.body.focus();
+    document.body.click();
+    
+    mainLoop();
+}
+
+function stopBot() {
+    isRunning = false;
+    stopRequested = true;
+    document.getElementById('btnStart').disabled = false;
+    document.getElementById('btnStop').disabled = true;
+    document.getElementById('statusText').innerText = 'Parando...';
+    addLog('⏹ Parando...', 'warning');
+}
+
+createUI();
+addLog('🤖 Bot carregado com sucesso!', 'success');
+if (GROQ_API_KEY) {
+    addLog('🔑 Chave da API detectada e pronta para uso.', 'success');
+} else {
+    addLog('⚠️ Nenhuma chave de API encontrada. Por favor, insira uma acima.', 'warning');
+}`;
 
   // ===== STATE =====
   let selectedVersionIndex = 0;
@@ -2483,6 +2691,23 @@
     }
   }
 
+  // ===== COPY QUIZ SCRIPT (direct copy, no modal) =====
+  function copyQuizScript() {
+    const doSuccess = () => {
+      showToastColored('📋 Script Quiz copiado!', 'red');
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(scriptQuiz).then(doSuccess).catch(() => {
+        fallbackCopy(scriptQuiz);
+        doSuccess();
+      });
+    } else {
+      fallbackCopy(scriptQuiz);
+      doSuccess();
+    }
+  }
+
   function fallbackCopy(text) {
     const textarea = document.createElement('textarea');
     textarea.value = text;
@@ -2497,16 +2722,16 @@
   // ===== TOAST =====
   function showToast(text) {
     const toast = document.getElementById('toast');
-    toast.classList.remove('purple', 'cyan');
+    toast.classList.remove('purple', 'cyan', 'red');
     document.getElementById('toastText').textContent = text;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  function showToastColored(text, version) {
+  function showToastColored(text, color) {
     const toast = document.getElementById('toast');
-    toast.classList.remove('purple', 'cyan');
-    toast.classList.add(version);
+    toast.classList.remove('purple', 'cyan', 'red');
+    toast.classList.add(color);
     document.getElementById('toastText').textContent = text;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
@@ -2538,7 +2763,6 @@
   updateClock();
   setInterval(updateClock, 1000);
 
-  // Welcome toast
   setTimeout(() => showToast('🎮 MINATOCRAFT Launcher carregado!'), 500);
 </script>
 
